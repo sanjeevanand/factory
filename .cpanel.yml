@@ -1,0 +1,5 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/a1743bri/public_html/factory
+    - /bin/cp -R * $DEPLOYPATH
+    
