@@ -6,7 +6,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AuthController;
 
 
-
+Route::get('/', function () {
+    return response()->json(['status' => 'ok']);
+});
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
