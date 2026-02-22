@@ -1,5 +1,26 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home2/a1743bri/public_html/factory
-    - /bin/cp -R * $DEPLOYPATH
-    
+
+    # Copy Laravel application files
+    - /bin/cp -R app bootstrap config database public resources routes artisan $DEPLOYPATH
+    - /bin/cp -R composer.json composer.lock $DEPLOYPATH
+
+    # Remove .git directory for security
+    - /bin/rm -rf $DEPLOYPATH/.git
+
+    # Install PHP dependencies (including Sanctum)
+    - cd $DEPLOYPATH && /usr/local/bin/composer install --no-dev --optimize-autoloader
+
+    # Rebuild autoload files
+    - cd $DEPLOYPATH && /usr/local/bin/composer dump-autoload -o
+
+    # Set correct permissions
+    - /bin/chmod -R 775 $DEPLOYPATH/storage
+    - /bin/chmod -R 775 $DEPLOYPATH/bootstrap/cache
+
+    # Clear and cache Laravel configs
+    - cd $DEPLOYPATH && php artisan config:clear
+    - cd $DEPLOYPATH && php artisan config:cache
+    - cd $DEPLOYPATH && php artisan route:cache
+    - cd $DEPLOYPATH && php artisan view:clear
